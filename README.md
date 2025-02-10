@@ -33,14 +33,28 @@ To make predictions using the loaded model:
 
 ```
 import numpy as np
+import cv2
+from tensorflow.keras.models import load_model
 
-dummy_input = np.random.rand(1, 224, 224, 3)
-diseases = ['Healthy', 'Diabetic Retinopathy', 'Glaucoma', 'Cataract']  
+model = load_model("your_model.h5")
 
-prediction = model.predict(dummy_input)
+diseases = ['Healthy', 'Diabetic Retinopathy', 'Glaucoma', 'Cataract']
+
+def preprocess_image(image_path):
+    img = cv2.imread(image_path)
+    img = cv2.resize(img, (224, 224))  # Resize to match model input size
+    img = img / 255.0  # Normalize pixel values
+    img = np.expand_dims(img, axis=0)  # Add batch dimension
+    return img
+
+image_path = input("Enter image path")
+input_image = preprocess_image(image_path)
+
+prediction = model.predict(input_image)
 predicted_disease = diseases[np.argmax(prediction)]
 
 print("Predicted Eye Condition:", predicted_disease)
+
 ```
 
 ## **Notes**
